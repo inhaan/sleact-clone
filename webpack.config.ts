@@ -3,17 +3,18 @@ import webpack, { Configuration as WebpackConfiguration } from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
+import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 
 interface Configuration extends WebpackConfiguration {
   devServer?: WebpackDevServerConfiguration;
 }
 
-const isDev = process.env.NODE_ENV !== 'production';
+const isDevelopment = process.env.NODE_ENV !== 'production';
 
 const config: Configuration = {
   name: 'sleact-clone',
-  mode: isDev ? 'development' : 'production',
-  devtool: isDev ? 'eval-source-map' : 'hidden-source-map',
+  mode: isDevelopment ? 'development' : 'production',
+  devtool: isDevelopment ? 'eval-source-map' : 'hidden-source-map',
 
   entry: './src/index',
   output: {
@@ -46,12 +47,17 @@ const config: Configuration = {
                 '@babel/preset-env',
                 {
                   targets: 'defaults or ie 10',
-                  debug: isDev,
+                  debug: isDevelopment,
                 },
               ],
               ['@babel/preset-react', { runtime: 'automatic' }],
               '@babel/preset-typescript',
             ],
+            env: {
+              development: {
+                plugins: [require.resolve('react-refresh/babel')],
+              },
+            },
           },
         },
       },
@@ -63,7 +69,7 @@ const config: Configuration = {
   },
   plugins: [
     new ForkTsCheckerWebpackPlugin(),
-    new webpack.EnvironmentPlugin({ NODE_ENV: isDev ? 'development' : 'production' }),
+    new webpack.EnvironmentPlugin({ NODE_ENV: isDevelopment ? 'development' : 'production' }),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'public/index.html',
@@ -76,5 +82,9 @@ const config: Configuration = {
     historyApiFallback: true,
   },
 };
+
+if (config.mode == 'development') {
+  config.plugins?.push(new ReactRefreshWebpackPlugin());
+}
 
 export default config;
