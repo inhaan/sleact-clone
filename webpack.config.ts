@@ -4,6 +4,7 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
+import CopyPlugin from 'copy-webpack-plugin';
 
 interface Configuration extends WebpackConfiguration {
   devServer?: WebpackDevServerConfiguration;
@@ -19,7 +20,7 @@ const config: Configuration = {
   entry: './src/index',
   output: {
     path: path.join(__dirname, 'build'),
-    filename: '[name].[contenthash].js',
+    filename: 'static/[name].[contenthash].js',
     clean: true,
   },
 
@@ -53,6 +54,7 @@ const config: Configuration = {
               ['@babel/preset-react', { runtime: 'automatic' }],
               '@babel/preset-typescript',
             ],
+            plugins: ['@emotion'],
             env: {
               development: {
                 plugins: [require.resolve('react-refresh/babel')],
@@ -74,6 +76,14 @@ const config: Configuration = {
       filename: 'index.html',
       template: 'public/index.html',
       chunks: ['main'],
+    }),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: 'public',
+          filter: (filePath) => path.normalize(filePath) !== path.normalize(path.join(__dirname, '/public/index.html')),
+        },
+      ],
     }),
   ],
   devServer: {
