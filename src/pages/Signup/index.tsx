@@ -1,10 +1,12 @@
+import useInput from '@hooks/useInput';
 import { ChangeEvent, useState, FormEvent, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Error, Form, Header, Input, Label, LinkContainer, Success } from './styles';
+import axios, { AxiosError } from 'axios';
+import { Button, Error, Form, Header, Input, Label, LinkContainer, Success } from '@pages/common/styles';
 
 const Signup = () => {
-  const [email, setEmail] = useState('');
-  const [nickname, setNickname] = useState('');
+  const [email, onChangeEmail] = useInput('');
+  const [nickname, onChangeNickname] = useInput('');
   const [password, setPassword] = useState('');
   const [passwordCheck, setPasswordCheck] = useState('');
 
@@ -12,23 +14,37 @@ const Signup = () => {
   const [signUpError, setSignUpError] = useState('');
   const [signUpSuccess, setSignUpSuccess] = useState(false);
 
+  const isValid = useCallback(() => {
+    return !mismatchError && nickname;
+  }, [mismatchError, nickname]);
+
   const onSubmit = useCallback(
-    (e: FormEvent<HTMLFormElement>) => {
+    async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      if (!mismatchError) {
-        console.log('회원가입 합니다');
+      if (!isValid()) {
+        return;
+      }
+
+      setSignUpError('');
+      setSignUpSuccess(false);
+
+      try {
+        await axios.post('/api/users', {
+          email,
+          nickname,
+          password,
+        });
+        setSignUpSuccess(true);
+      } catch (err) {
+        if (err instanceof AxiosError) {
+          setSignUpError(err.response?.data);
+        } else {
+          console.error('Unexpected error', err);
+        }
       }
     },
-    [mismatchError],
+    [isValid, email, nickname, password],
   );
-
-  const onChangeEmail = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  }, []);
-
-  const onChangeNickname = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setNickname(e.target.value);
-  }, []);
 
   const onChangePassword = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {

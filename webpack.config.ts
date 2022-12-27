@@ -88,8 +88,13 @@ const config: Configuration = {
   ],
   devServer: {
     static: './build',
-    port: 3090,
     historyApiFallback: true,
+    proxy: {
+      '/api/': {
+        target: 'http://localhost:3095',
+        changeOrigin: true,
+      },
+    },
   },
 };
 
