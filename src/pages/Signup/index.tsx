@@ -2,7 +2,7 @@ import useInput from '@hooks/useInput';
 import { ChangeEvent, useState, FormEvent, useCallback } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { AxiosError } from 'axios';
-import { Button, Error, Form, Header, Input, Label, LinkContainer, Success } from '@pages/common/styles';
+import { Button, Error, Form, Header, Input, Label, LinkContainer, Success } from '@pages/_common/styles';
 import useUsers from '@hooks/dataFetch/useUsers';
 import { saveUserAsync } from '@apis/users';
 

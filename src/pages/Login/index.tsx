@@ -1,5 +1,5 @@
 import useInput from '@hooks/useInput';
-import { Button, Error, Form, Header, Input, Label, LinkContainer } from '@pages/common/styles';
+import { Button, Error, Form, Header, Input, Label, LinkContainer } from '@pages/_common/styles';
 import { FormEvent, useCallback, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import useUsers from '@hooks/dataFetch/useUsers';

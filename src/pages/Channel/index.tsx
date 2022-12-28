@@ -1,11 +1,5 @@
-import Workspace from '@layouts/Workspace';
-
 const Channel = () => {
-  return (
-    <Workspace>
-      <div>채널</div>
-    </Workspace>
-  );
+  return <div>채널</div>;
 };
 
 export default Channel;

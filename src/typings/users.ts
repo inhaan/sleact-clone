@@ -1,3 +1,4 @@
 export interface IUser {
-  something: unknown;
+  email: string;
+  nickname: string;
 }
