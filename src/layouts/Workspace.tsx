@@ -1,7 +1,7 @@
 import { ReactNode, useCallback } from 'react';
-import axios from 'axios';
 import useUsers from '@hooks/dataFetch/useUsers';
 import { Navigate } from 'react-router-dom';
+import { logoutAsync } from '@apis/users';
 
 interface WorkspaceProps {
   children: ReactNode;
@@ -11,7 +11,7 @@ const Workspace = ({ children }: WorkspaceProps) => {
   const { data, mutate } = useUsers();
 
   const onClickLogout = useCallback(async () => {
-    await axios.post('/api/users/logout');
+    await logoutAsync();
     mutate(false, false);
   }, []);
 

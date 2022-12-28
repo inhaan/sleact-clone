@@ -3,7 +3,7 @@ import { Button, Error, Form, Header, Input, Label, LinkContainer } from '@pages
 import { FormEvent, useCallback, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import useUsers from '@hooks/dataFetch/useUsers';
-import { postLogin } from '@apis/users';
+import { loginAsync } from '@apis/users';
 
 const Login = () => {
   const { data, mutate } = useUsers();
@@ -18,7 +18,7 @@ const Login = () => {
       setLoginError(false);
 
       try {
-        const user = await postLogin(email, password);
+        const user = await loginAsync(email, password);
         mutate(user, false);
       } catch {
         setLoginError(true);

@@ -1,10 +1,10 @@
 import useInput from '@hooks/useInput';
 import { ChangeEvent, useState, FormEvent, useCallback } from 'react';
 import { Link, Navigate } from 'react-router-dom';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 import { Button, Error, Form, Header, Input, Label, LinkContainer, Success } from '@pages/common/styles';
 import useUsers from '@hooks/dataFetch/useUsers';
-import { postUsers } from '@apis/users';
+import { saveUserAsync } from '@apis/users';
 
 const Signup = () => {
   const { data } = useUsers();
@@ -32,7 +32,7 @@ const Signup = () => {
       setSignUpSuccess(false);
 
       try {
-        await postUsers(email, nickname, password);
+        await saveUserAsync(email, nickname, password);
         setSignUpSuccess(true);
       } catch (err) {
         if (err instanceof AxiosError) {
