@@ -33,6 +33,7 @@ const config: Configuration = {
       '@pages': path.resolve(__dirname, 'src/pages'),
       '@utils': path.resolve(__dirname, 'src/utils'),
       '@typings': path.resolve(__dirname, 'src/typings'),
+      '@apis': path.resolve(__dirname, 'src/apis'),
     },
   },
   module: {
@@ -76,6 +77,7 @@ const config: Configuration = {
       filename: 'index.html',
       template: 'public/index.html',
       chunks: ['main'],
+      publicPath: '/',
     }),
     new CopyPlugin({
       patterns: [

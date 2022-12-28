@@ -1,15 +1,18 @@
 import useInput from '@hooks/useInput';
 import { ChangeEvent, useState, FormEvent, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import axios, { AxiosError } from 'axios';
 import { Button, Error, Form, Header, Input, Label, LinkContainer, Success } from '@pages/common/styles';
+import useUsers from '@hooks/dataFetch/useUsers';
+import { postUsers } from '@apis/users';
 
 const Signup = () => {
+  const { data } = useUsers();
+
   const [email, onChangeEmail] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
   const [password, setPassword] = useState('');
   const [passwordCheck, setPasswordCheck] = useState('');
-
   const [mismatchError, setMissmatchError] = useState(false);
   const [signUpError, setSignUpError] = useState('');
   const [signUpSuccess, setSignUpSuccess] = useState(false);
@@ -29,11 +32,7 @@ const Signup = () => {
       setSignUpSuccess(false);
 
       try {
-        await axios.post('/api/users', {
-          email,
-          nickname,
-          password,
-        });
+        await postUsers(email, nickname, password);
         setSignUpSuccess(true);
       } catch (err) {
         if (err instanceof AxiosError) {
@@ -62,6 +61,9 @@ const Signup = () => {
     [password],
   );
 
+  if (data) {
+    return <Navigate to="/workspace/channel" />;
+  }
   return (
     <div id="container">
       <Header>Sleact</Header>

@@ -1,9 +1,9 @@
 import useInput from '@hooks/useInput';
 import { Button, Error, Form, Header, Input, Label, LinkContainer } from '@pages/common/styles';
 import { FormEvent, useCallback, useState } from 'react';
-import { Link } from 'react-router-dom';
-import axios from 'axios';
+import { Link, Navigate } from 'react-router-dom';
 import useUsers from '@hooks/dataFetch/useUsers';
+import { postLogin } from '@apis/users';
 
 const Login = () => {
   const { data, mutate } = useUsers();
@@ -18,11 +18,8 @@ const Login = () => {
       setLoginError(false);
 
       try {
-        await axios.post('/api/users/login', {
-          email,
-          password,
-        });
-        mutate();
+        const user = await postLogin(email, password);
+        mutate(user, false);
       } catch {
         setLoginError(true);
       }
@@ -30,6 +27,9 @@ const Login = () => {
     [email, password],
   );
 
+  if (data) {
+    return <Navigate to="/workspace/channel" />;
+  }
   return (
     <div id="container">
       <Header>Sleact</Header>
