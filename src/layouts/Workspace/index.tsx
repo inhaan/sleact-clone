@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { MouseEvent, useCallback, useState } from 'react';
 import useUsers from '@hooks/dataFetch/useUsers';
 import { Link, Navigate, Outlet } from 'react-router-dom';
 import gravatar from 'gravatar';
@@ -11,15 +11,28 @@ import {
   LogOutButton,
   MenuScroll,
   ProfileImg,
+  ProfileModal,
   RightMenu,
   WorkspaceButton,
   WorkspaceName,
   Workspaces,
   WorkspaceWrapper,
 } from './styles';
+import Menu from '@components/Menu';
 
 const Workspace = () => {
   const { data: user, mutate } = useUsers();
+  const [showUserMenu, setShowUserMenu] = useState(false);
+
+  const onClickUserProfile = () => {
+    setShowUserMenu((prev) => !prev);
+  };
+
+  const onCloseUserProfile = (e: MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      setShowUserMenu(false);
+    }
+  };
 
   const onClickLogout = useCallback(async () => {
     await logoutAsync();
@@ -33,14 +46,27 @@ const Workspace = () => {
     <div>
       <Header>
         <RightMenu>
-          <span>
-            {user && (
-              <>
-                <ProfileImg src={gravatar.url(user.email, { size: '28px', default: 'retro' })} alt={user.nickname} />
-                <LogOutButton onClick={onClickLogout}>로그아웃</LogOutButton>
-              </>
-            )}
-          </span>
+          {user && (
+            <>
+              <ProfileImg
+                src={gravatar.url(user.email, { size: '28px', default: 'retro' })}
+                alt={user.nickname}
+                onClick={onClickUserProfile}
+              />
+              {showUserMenu && (
+                <Menu style={{ right: 0, top: 38 }} show={showUserMenu} onCloseModal={onCloseUserProfile}>
+                  <ProfileModal>
+                    <img src={gravatar.url(user.email, { s: '36px', d: 'retro' })} alt={user.nickname} />
+                    <div>
+                      <span id="profile-name">{user.nickname}</span>
+                      <span id="profile-active">Active</span>
+                    </div>
+                  </ProfileModal>
+                  <LogOutButton onClick={onClickLogout}>로그아웃</LogOutButton>
+                </Menu>
+              )}
+            </>
+          )}
         </RightMenu>
       </Header>
       <WorkspaceWrapper>
