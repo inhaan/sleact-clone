@@ -8,9 +8,17 @@ interface WorkspaceMenuProps {
   onCloseModal?(): void;
   onClickLogout?(): void;
   onClickAddChannel?(): void;
+  onClickInviteWorkspace?(): void;
 }
 
-const WorkspaceMenu = ({ show, style, onCloseModal, onClickLogout, onClickAddChannel }: WorkspaceMenuProps) => {
+const WorkspaceMenu = ({
+  show,
+  style,
+  onCloseModal,
+  onClickLogout,
+  onClickAddChannel,
+  onClickInviteWorkspace,
+}: WorkspaceMenuProps) => {
   const onCloseModalInner = useCallback(
     (e: MouseEvent) => {
       if (e.target === e.currentTarget) {
@@ -24,7 +32,7 @@ const WorkspaceMenu = ({ show, style, onCloseModal, onClickLogout, onClickAddCha
     <Menu show={show} onCloseModal={onCloseModalInner} style={style}>
       <WorkspaceModal>
         <h2>Sleact</h2>
-        {/* <button onClick={onClickInviteWorkspace}>워크스페이스에 사용자 초대</button> */}
+        <button onClick={onClickInviteWorkspace}>워크스페이스에 사용자 초대</button>
         <button onClick={onClickAddChannel}>채널 만들기</button>
         <button onClick={onClickLogout}>로그아웃</button>
       </WorkspaceModal>

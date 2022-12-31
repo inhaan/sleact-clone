@@ -5,11 +5,11 @@ import { AxiosError } from 'axios';
 import { Button, Error, Form, Header, Input, Label, LinkContainer, Success } from '@components/common/styles';
 import useUsers from '@hooks/dataFetch/useUsers';
 import { createUserAsync } from '@apis/users';
-import useUserDefault from '@hooks/useUserDefault';
+import useDefaultUrl from '@hooks/useDefaultUrl';
 
 const Signup = () => {
   const { user, mutate } = useUsers();
-  const { workspace } = useUserDefault();
+  const defaultUrl = useDefaultUrl();
   const [email, onChangeEmail] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
   const [password, setPassword] = useState('');
@@ -64,7 +64,7 @@ const Signup = () => {
   );
 
   if (user) {
-    return <Navigate to={`/workspace/${workspace?.url ?? ''}`} />;
+    return <Navigate to={defaultUrl} />;
   }
   return (
     <div id="container">

@@ -3,7 +3,7 @@ import { Button, Input, Label } from '@components/common/styles';
 import Modal from '@components/base/Modal';
 import useUsers from '@hooks/dataFetch/useUsers';
 import useInput from '@hooks/useInput';
-import { notifyError } from '@utils/toast';
+import { notifyError, toastError } from '@utils/toast';
 import { FormEvent, MouseEvent, useCallback } from 'react';
 
 interface CreateWorkspaceModalProps {
@@ -34,6 +34,10 @@ const CreateWorkspaceModal = ({ show, onCloseModal }: CreateWorkspaceModalProps)
   const onSubmit = useCallback(
     async (e: FormEvent) => {
       e.preventDefault();
+      if (!workspace?.trim() || !url?.trim()) {
+        toastError('워크스페이스 이름과 url을 입력해 주세요');
+        return;
+      }
       try {
         await createWorkspaceAsync(workspace, url);
         mutate();

@@ -15,12 +15,11 @@ const App = () => {
   return (
     <Suspense>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/workspace" element={<Workspace />}>
+        <Route path="/" element={<Workspace />}>
           <Route index element={<EmptyWorkspace />} />
-          <Route path=":workspace" element={<Outlet />}>
+          <Route path="workspace/:workspace" element={<Outlet />}>
             <Route index element={<EmptyChat />} />
             <Route path="channel/:channel" element={<Channel />} />
             <Route path="dm/:id" element={<DirectMessage />} />

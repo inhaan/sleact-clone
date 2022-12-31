@@ -3,7 +3,7 @@ import Modal from '@components/base/Modal';
 import { Button, Input, Label } from '@components/common/styles';
 import useChannels from '@hooks/dataFetch/useChannels';
 import useInput from '@hooks/useInput';
-import { notifyError } from '@utils/toast';
+import { notifyError, toastError } from '@utils/toast';
 import { FormEvent, MouseEvent, useCallback } from 'react';
 
 interface CreateChannelModalProps {
@@ -29,6 +29,10 @@ const CreateChannelModal = ({ workspaceUrl, show, onCloseModal }: CreateChannelM
   const onSubmit = useCallback(
     async (e: FormEvent) => {
       e.preventDefault();
+      if (!channel?.trim()) {
+        toastError('채널명을 입력해 주세요');
+        return;
+      }
       try {
         await createChannelAsync(workspaceUrl, channel);
         mutate();
@@ -44,7 +48,7 @@ const CreateChannelModal = ({ workspaceUrl, show, onCloseModal }: CreateChannelM
   return (
     <Modal show={show} onCloseModal={onCloseModalInner}>
       <form onSubmit={onSubmit}>
-        <Label id="channel-label">
+        <Label>
           <span>채널</span>
           <Input id="text" value={channel} onChange={onChangeChannel} />
         </Label>

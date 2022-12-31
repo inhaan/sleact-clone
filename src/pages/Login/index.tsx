@@ -4,11 +4,11 @@ import { FormEvent, useCallback, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import useUsers from '@hooks/dataFetch/useUsers';
 import { loginAsync } from '@apis/users';
-import useUserDefault from '@hooks/useUserDefault';
+import useDefaultUrl from '@hooks/useDefaultUrl';
 
 const Login = () => {
   const { user, mutate } = useUsers();
-  const { workspace } = useUserDefault();
+  const defaultUrl = useDefaultUrl();
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
   const [loginError, setLoginError] = useState(false);
@@ -29,7 +29,8 @@ const Login = () => {
   );
 
   if (user) {
-    return <Navigate to={`/workspace/${workspace?.url ?? ''}`} />;
+    // return null;
+    return <Navigate to={defaultUrl} />;
   }
   return (
     <div id="container">
