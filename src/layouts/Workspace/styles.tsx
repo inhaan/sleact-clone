@@ -19,6 +19,7 @@ export const ProfileImg = styled.img`
   position: absolute;
   top: 5px;
   right: 16px;
+  cursor: pointer;
 `;
 
 export const WorkspaceWrapper = styled.div`
@@ -37,6 +38,7 @@ export const Workspaces = styled.div`
   vertical-align: top;
   text-align: center;
   padding: 15px 0 0;
+  min-height: calc(100vh - 38px);
 `;
 
 export const Channels = styled.nav`

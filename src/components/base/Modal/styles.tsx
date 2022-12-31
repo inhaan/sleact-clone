@@ -8,6 +8,7 @@ export const CreateModal = styled.div`
   top: 0;
   right: 0;
   z-index: 1022;
+  background: rgba(0, 0, 0, 0.5);
   & > div {
     margin-top: 200px;
     display: inline-block;

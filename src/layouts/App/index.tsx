@@ -1,6 +1,8 @@
 import Workspace from '@layouts/Workspace';
+import EmptyChat from '@pages/EmptyChat';
+import EmptyWorkspace from '@pages/EmptyWorkspace';
 import { lazy, Suspense } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -16,9 +18,13 @@ const App = () => {
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/workspace/:workspace" element={<Workspace />}>
-          <Route path="/workspace/:workspace/channel/:channel" element={<Channel />} />
-          <Route path="/workspace/:workspace/dm/:id" element={<DirectMessage />} />
+        <Route path="/workspace" element={<Workspace />}>
+          <Route index element={<EmptyWorkspace />} />
+          <Route path=":workspace" element={<Outlet />}>
+            <Route index element={<EmptyChat />} />
+            <Route path="channel/:channel" element={<Channel />} />
+            <Route path="dm/:id" element={<DirectMessage />} />
+          </Route>
         </Route>
       </Routes>
       <ToastContainer />

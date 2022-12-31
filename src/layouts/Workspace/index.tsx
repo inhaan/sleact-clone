@@ -16,12 +16,11 @@ import {
   WorkspaceWrapper,
 } from './styles';
 import CreateWorkspaceModal from '@components/modals/CreateWorkspaceModal';
-import { toastError } from '@utils/toast';
+import { notifyError } from '@utils/toast';
 import ProfileMenu from '@components/menus/ProfileMenu';
 import WorkspaceLink from '@components/base/WorkspaceLink';
 import WorkspaceMenu from '@components/menus/WorkspaceMenu';
 import CreateChannelModal from '@components/modals/CreateChannelModal';
-import { isAxiosError } from 'axios';
 import useChannels from '@hooks/dataFetch/useChannels';
 
 const Workspace = () => {
@@ -46,11 +45,8 @@ const Workspace = () => {
     try {
       await logoutAsync();
       mutate(false, false);
-    } catch (e) {
-      if (isAxiosError(e)) {
-        toastError(e.response?.data || '로그아웃을 하지 못했습니다');
-      }
-      console.log(e);
+    } catch (err) {
+      notifyError(err, '채널을 생성하지 못했습니다');
     }
   }, []);
 
@@ -100,27 +96,31 @@ const Workspace = () => {
           ))}
           <AddButton onClick={onClickCreateWorkspace}>+</AddButton>
         </Workspaces>
-        <Channels>
-          <WorkspaceName onClick={onToggleWorkspaceMenu}>{workspace?.name}</WorkspaceName>
-          <MenuScroll>
-            <WorkspaceMenu
-              show={showWorkspaceMenu}
-              style={{ top: 95, left: 80 }}
-              onCloseModal={onCloseWorkspaceMenu}
-              onClickLogout={onClickLogout}
-              onClickAddChannel={onClickAddChannel}
-            />
-            {channels?.map((channel) => (
-              <div key={channel.id}>{channel.name}</div>
-            ))}
-          </MenuScroll>
-        </Channels>
+        {workspace && (
+          <Channels>
+            <WorkspaceName onClick={onToggleWorkspaceMenu}>{workspace?.name}</WorkspaceName>
+            <MenuScroll>
+              <WorkspaceMenu
+                show={showWorkspaceMenu}
+                style={{ top: 95, left: 80 }}
+                onCloseModal={onCloseWorkspaceMenu}
+                onClickLogout={onClickLogout}
+                onClickAddChannel={onClickAddChannel}
+              />
+              {channels?.map((channel) => (
+                <div key={channel.id}>{channel.name}</div>
+              ))}
+            </MenuScroll>
+          </Channels>
+        )}
         <Chats>
           <Outlet />
         </Chats>
       </WorkspaceWrapper>
       <CreateWorkspaceModal show={showCreateWorkspaceModal} onCloseModal={onCloseModal} />
-      <CreateChannelModal show={showCreateChannelModal} onCloseModal={onCloseModal} />
+      {workspace && (
+        <CreateChannelModal workspaceUrl={workspace?.url} show={showCreateChannelModal} onCloseModal={onCloseModal} />
+      )}
     </div>
   );
 };

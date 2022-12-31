@@ -3,9 +3,8 @@ import { Button, Input, Label } from '@components/common/styles';
 import Modal from '@components/base/Modal';
 import useUsers from '@hooks/dataFetch/useUsers';
 import useInput from '@hooks/useInput';
-import { toastError } from '@utils/toast';
+import { notifyError } from '@utils/toast';
 import { FormEvent, MouseEvent, useCallback } from 'react';
-import { isAxiosError } from 'axios';
 
 interface CreateWorkspaceModalProps {
   show?: boolean;
@@ -39,11 +38,8 @@ const CreateWorkspaceModal = ({ show, onCloseModal }: CreateWorkspaceModalProps)
         await createWorkspaceAsync(workspace, url);
         mutate();
         closeModal();
-      } catch (e) {
-        if (isAxiosError(e)) {
-          toastError(e.response?.data || '워크스페이스를 생성하지 못했습니다');
-        }
-        console.error(e);
+      } catch (err) {
+        notifyError(err, '채널을 생성하지 못했습니다');
       }
     },
     [workspace, url, mutate, closeModal],

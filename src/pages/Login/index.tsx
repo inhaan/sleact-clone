@@ -7,8 +7,8 @@ import { loginAsync } from '@apis/users';
 import useUserDefault from '@hooks/useUserDefault';
 
 const Login = () => {
-  const { mutate } = useUsers();
-  const { workspace, channel } = useUserDefault();
+  const { user, mutate } = useUsers();
+  const { workspace } = useUserDefault();
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
   const [loginError, setLoginError] = useState(false);
@@ -28,8 +28,8 @@ const Login = () => {
     [email, password],
   );
 
-  if (workspace && channel) {
-    return <Navigate to={`/workspace/${workspace.url}/channel/${channel.name}`} />;
+  if (user) {
+    return <Navigate to={`/workspace/${workspace?.url ?? ''}`} />;
   }
   return (
     <div id="container">

@@ -106,3 +106,12 @@ export const LinkContainer = styled.p`
     }
   }
 `;
+
+export const EmptyPageContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #888;
+  height: calc(100vh - 38px);
+  font-size: 1.2rem;
+`;
