@@ -1,6 +1,6 @@
-import { MouseEvent, useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import useUsers from '@hooks/dataFetch/useUsers';
-import { Link, Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useParams } from 'react-router-dom';
 import gravatar from 'gravatar';
 import { logoutAsync } from '@apis/users';
 import {
@@ -8,35 +8,72 @@ import {
   Channels,
   Chats,
   Header,
-  LogOutButton,
   MenuScroll,
   ProfileImg,
-  ProfileModal,
   RightMenu,
-  WorkspaceButton,
   WorkspaceName,
   Workspaces,
   WorkspaceWrapper,
 } from './styles';
-import Menu from '@components/Menu';
+import CreateWorkspaceModal from '@components/modals/CreateWorkspaceModal';
+import { toastError } from '@utils/toast';
+import ProfileMenu from '@components/menus/ProfileMenu';
+import WorkspaceLink from '@components/base/WorkspaceLink';
+import WorkspaceMenu from '@components/menus/WorkspaceMenu';
+import CreateChannelModal from '@components/modals/CreateChannelModal';
+import { isAxiosError } from 'axios';
+import useChannels from '@hooks/dataFetch/useChannels';
 
 const Workspace = () => {
-  const { data: user, mutate } = useUsers();
+  const { workspace: workspaceUrl } = useParams<{ workspace: string }>();
+  const { user, mutate } = useUsers();
+  const workspace = user ? user.Workspaces.find((x) => x.url === workspaceUrl) : null;
+  const { channels } = useChannels(workspaceUrl);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] = useState(false);
+  const [showWorkspaceMenu, setShowWorkspaceMenu] = useState(false);
+  const [showCreateChannelModal, setShowCreateChannelModal] = useState(false);
 
-  const onClickUserProfile = () => {
+  const onToggleUserProfile = useCallback(() => {
     setShowUserMenu((prev) => !prev);
-  };
+  }, []);
 
-  const onCloseUserProfile = (e: MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      setShowUserMenu(false);
-    }
-  };
+  const onCloseUserProfile = useCallback(() => {
+    setShowUserMenu(false);
+  }, []);
 
   const onClickLogout = useCallback(async () => {
-    await logoutAsync();
-    mutate(false, false);
+    try {
+      await logoutAsync();
+      mutate(false, false);
+    } catch (e) {
+      if (isAxiosError(e)) {
+        toastError(e.response?.data || '로그아웃을 하지 못했습니다');
+      }
+      console.log(e);
+    }
+  }, []);
+
+  const onCloseModal = useCallback(() => {
+    setShowCreateWorkspaceModal(false);
+    setShowCreateChannelModal(false);
+  }, []);
+
+  const onClickCreateWorkspace = useCallback(() => {
+    setShowCreateWorkspaceModal(true);
+  }, []);
+
+  const onToggleWorkspaceMenu = useCallback(() => {
+    setShowWorkspaceMenu((prev) => !prev);
+  }, []);
+
+  const onCloseWorkspaceMenu = useCallback(() => {
+    setShowWorkspaceMenu(false);
+  }, []);
+
+  const onClickAddChannel = useCallback(() => {
+    setShowCreateChannelModal(true);
+    setShowWorkspaceMenu(false);
   }, []);
 
   if (user === false) {
@@ -45,48 +82,45 @@ const Workspace = () => {
   return (
     <div>
       <Header>
-        <RightMenu>
-          {user && (
-            <>
-              <ProfileImg
-                src={gravatar.url(user.email, { size: '28px', default: 'retro' })}
-                alt={user.nickname}
-                onClick={onClickUserProfile}
-              />
-              {showUserMenu && (
-                <Menu style={{ right: 0, top: 38 }} show={showUserMenu} onCloseModal={onCloseUserProfile}>
-                  <ProfileModal>
-                    <img src={gravatar.url(user.email, { s: '36px', d: 'retro' })} alt={user.nickname} />
-                    <div>
-                      <span id="profile-name">{user.nickname}</span>
-                      <span id="profile-active">Active</span>
-                    </div>
-                  </ProfileModal>
-                  <LogOutButton onClick={onClickLogout}>로그아웃</LogOutButton>
-                </Menu>
-              )}
-            </>
-          )}
-        </RightMenu>
+        {user && (
+          <RightMenu>
+            <ProfileImg
+              src={gravatar.url(user.email, { size: '28px', default: 'retro' })}
+              alt={user.nickname}
+              onClick={onToggleUserProfile}
+            />
+            <ProfileMenu show={showUserMenu} onCloseModal={onCloseUserProfile} onClickLogout={onClickLogout} />
+          </RightMenu>
+        )}
       </Header>
       <WorkspaceWrapper>
         <Workspaces>
-          <Link to="/">
-            <WorkspaceButton>워크1</WorkspaceButton>
-          </Link>
-          <Link to="/">
-            <WorkspaceButton>워크2</WorkspaceButton>
-          </Link>
-          <AddButton>+</AddButton>
+          {user?.Workspaces?.map((workspace) => (
+            <WorkspaceLink key={workspace.id} workspace={workspace} />
+          ))}
+          <AddButton onClick={onClickCreateWorkspace}>+</AddButton>
         </Workspaces>
         <Channels>
-          <WorkspaceName>Sleact</WorkspaceName>
-          <MenuScroll></MenuScroll>
+          <WorkspaceName onClick={onToggleWorkspaceMenu}>{workspace?.name}</WorkspaceName>
+          <MenuScroll>
+            <WorkspaceMenu
+              show={showWorkspaceMenu}
+              style={{ top: 95, left: 80 }}
+              onCloseModal={onCloseWorkspaceMenu}
+              onClickLogout={onClickLogout}
+              onClickAddChannel={onClickAddChannel}
+            />
+            {channels?.map((channel) => (
+              <div key={channel.id}>{channel.name}</div>
+            ))}
+          </MenuScroll>
         </Channels>
         <Chats>
           <Outlet />
         </Chats>
       </WorkspaceWrapper>
+      <CreateWorkspaceModal show={showCreateWorkspaceModal} onCloseModal={onCloseModal} />
+      <CreateChannelModal show={showCreateChannelModal} onCloseModal={onCloseModal} />
     </div>
   );
 };

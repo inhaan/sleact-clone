@@ -1,0 +1,69 @@
+import { createWorkspaceAsync } from '@apis/workspaces';
+import { Button, Input, Label } from '@components/common/styles';
+import Modal from '@components/base/Modal';
+import useUsers from '@hooks/dataFetch/useUsers';
+import useInput from '@hooks/useInput';
+import { toastError } from '@utils/toast';
+import { FormEvent, MouseEvent, useCallback } from 'react';
+import { isAxiosError } from 'axios';
+
+interface CreateWorkspaceModalProps {
+  show?: boolean;
+  onCloseModal?(): void;
+}
+
+const CreateWorkspaceModal = ({ show, onCloseModal }: CreateWorkspaceModalProps) => {
+  const { mutate } = useUsers();
+  const [workspace, onChangeWorkspace, setWorkspace] = useInput('');
+  const [url, onChangeUrl, setUrl] = useInput('');
+
+  const closeModal = useCallback(() => {
+    onCloseModal?.();
+    setWorkspace('');
+    setUrl('');
+  }, [onCloseModal]);
+
+  const onCloseModalInner = useCallback(
+    (e: MouseEvent) => {
+      if (e.target === e.currentTarget) {
+        closeModal();
+      }
+    },
+    [closeModal],
+  );
+
+  const onSubmit = useCallback(
+    async (e: FormEvent) => {
+      e.preventDefault();
+      try {
+        await createWorkspaceAsync(workspace, url);
+        mutate();
+        closeModal();
+      } catch (e) {
+        if (isAxiosError(e)) {
+          toastError(e.response?.data || '워크스페이스를 생성하지 못했습니다');
+        }
+        console.error(e);
+      }
+    },
+    [workspace, url, mutate, closeModal],
+  );
+
+  return (
+    <Modal show={show} onCloseModal={onCloseModalInner}>
+      <form onSubmit={onSubmit}>
+        <Label>
+          <span>워크스페이스 이름</span>
+          <Input value={workspace} onChange={onChangeWorkspace} />
+        </Label>
+        <Label>
+          <span>워크스페이스 url</span>
+          <Input value={url} onChange={onChangeUrl} />
+        </Label>
+        <Button type="submit">생성하기</Button>
+      </form>
+    </Modal>
+  );
+};
+
+export default CreateWorkspaceModal;

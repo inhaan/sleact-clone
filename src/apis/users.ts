@@ -1,7 +1,7 @@
-import { IUser } from '@typings/users';
+import { IUser } from '@typings/db';
 import axios from 'axios';
 
-export const saveUserAsync = async (email: string, nickname: string, password: string) => {
+export const createUserAsync = async (email: string, nickname: string, password: string) => {
   await axios.post('/api/users', { email, nickname, password });
 };
 

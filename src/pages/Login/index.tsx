@@ -1,13 +1,14 @@
 import useInput from '@hooks/useInput';
-import { Button, Error, Form, Header, Input, Label, LinkContainer } from '@pages/_common/styles';
+import { Button, Error, Form, Header, Input, Label, LinkContainer } from '@components/common/styles';
 import { FormEvent, useCallback, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import useUsers from '@hooks/dataFetch/useUsers';
 import { loginAsync } from '@apis/users';
+import useUserDefault from '@hooks/useUserDefault';
 
 const Login = () => {
-  const { data, mutate } = useUsers();
-
+  const { mutate } = useUsers();
+  const { workspace, channel } = useUserDefault();
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
   const [loginError, setLoginError] = useState(false);
@@ -18,8 +19,8 @@ const Login = () => {
       setLoginError(false);
 
       try {
-        const user = await loginAsync(email, password);
-        mutate(user, false);
+        await loginAsync(email, password);
+        mutate();
       } catch {
         setLoginError(true);
       }
@@ -27,8 +28,8 @@ const Login = () => {
     [email, password],
   );
 
-  if (data) {
-    return <Navigate to="/workspace/channel" />;
+  if (workspace && channel) {
+    return <Navigate to={`/workspace/${workspace.url}/channel/${channel.name}`} />;
   }
   return (
     <div id="container">

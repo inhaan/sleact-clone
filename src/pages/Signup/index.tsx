@@ -2,13 +2,14 @@ import useInput from '@hooks/useInput';
 import { ChangeEvent, useState, FormEvent, useCallback } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { AxiosError } from 'axios';
-import { Button, Error, Form, Header, Input, Label, LinkContainer, Success } from '@pages/_common/styles';
+import { Button, Error, Form, Header, Input, Label, LinkContainer, Success } from '@components/common/styles';
 import useUsers from '@hooks/dataFetch/useUsers';
-import { saveUserAsync } from '@apis/users';
+import { createUserAsync } from '@apis/users';
+import useUserDefault from '@hooks/useUserDefault';
 
 const Signup = () => {
-  const { data } = useUsers();
-
+  const { mutate } = useUsers();
+  const { workspace, channel } = useUserDefault();
   const [email, onChangeEmail] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
   const [password, setPassword] = useState('');
@@ -32,8 +33,9 @@ const Signup = () => {
       setSignUpSuccess(false);
 
       try {
-        await saveUserAsync(email, nickname, password);
+        await createUserAsync(email, nickname, password);
         setSignUpSuccess(true);
+        mutate();
       } catch (err) {
         if (err instanceof AxiosError) {
           setSignUpError(err.response?.data);
@@ -61,8 +63,8 @@ const Signup = () => {
     [password],
   );
 
-  if (data) {
-    return <Navigate to="/workspace/channel" />;
+  if (workspace && channel) {
+    return <Navigate to={`/workspace/${workspace.url}/channel/${channel.name}`} />;
   }
   return (
     <div id="container">

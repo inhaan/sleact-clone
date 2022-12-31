@@ -21,39 +21,6 @@ export const ProfileImg = styled.img`
   right: 16px;
 `;
 
-export const ProfileModal = styled.div`
-  display: flex;
-  padding: 20px;
-  & img {
-    display: flex;
-  }
-  & > div {
-    display: flex;
-    flex-direction: column;
-    margin-left: 10px;
-  }
-  & #profile-name {
-    font-weight: bold;
-    display: inline-flex;
-  }
-  & #profile-active {
-    font-size: 13px;
-    display: inline-flex;
-  }
-`;
-
-export const LogOutButton = styled.button`
-  border: none;
-  width: 100%;
-  border-top: 1px solid rgb(29, 28, 29);
-  background: transparent;
-  display: block;
-  height: 33px;
-  padding: 5px 20px 5px;
-  outline: none;
-  cursor: pointer;
-`;
-
 export const WorkspaceWrapper = styled.div`
   display: flex;
   flex: 1;
@@ -145,25 +112,6 @@ export const MenuScroll = styled.div`
   overflow-y: auto;
 `;
 
-export const WorkspaceModal = styled.div`
-  padding: 10px 0 0;
-  & h2 {
-    padding-left: 20px;
-  }
-  & > button {
-    width: 100%;
-    height: 28px;
-    padding: 4px;
-    border: none;
-    background: transparent;
-    border-top: 1px solid rgb(28, 29, 28);
-    cursor: pointer;
-    &:last-of-type {
-      border-bottom: 1px solid rgb(28, 29, 28);
-    }
-  }
-`;
-
 export const Chats = styled.div`
   flex: 1;
 `;
@@ -176,19 +124,5 @@ export const AddButton = styled.button`
   height: 40px;
   background: transparent;
   border: none;
-  cursor: pointer;
-`;
-
-export const WorkspaceButton = styled.button`
-  display: inline-block;
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: white;
-  border: 3px solid #3f0e40;
-  margin-bottom: 15px;
-  font-size: 18px;
-  font-weight: 700;
-  color: black;
   cursor: pointer;
 `;
