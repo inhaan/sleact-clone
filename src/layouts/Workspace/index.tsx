@@ -18,13 +18,15 @@ import {
 import CreateWorkspaceModal from '@components/modals/CreateWorkspaceModal';
 import { notifyError } from '@utils/toast';
 import ProfileMenu from '@components/menus/ProfileMenu';
-import WorkspaceLink from '@components/base/WorkspaceLink';
+import WorkspaceLink from '@components/workspace/WorkspaceLink';
 import WorkspaceMenu from '@components/menus/WorkspaceMenu';
 import CreateChannelModal from '@components/modals/CreateChannelModal';
 import useChannels from '@hooks/dataFetch/useChannels';
 import { saveLocation } from '@utils/localStorage';
 import InviteWorkspaceModal from '@components/modals/InviteWorksaceModal';
 import useWorkspaceMembers from '@hooks/dataFetch/useWorkspaceMembers';
+import ChannelList from '@components/workspace/ChannelList';
+import DMList from '@components/workspace/DMList';
 
 const Workspace = () => {
   const { workspace: workspaceUrl, channel, id } = useParams();
@@ -129,14 +131,8 @@ const Workspace = () => {
                 onClickAddChannel={onClickAddChannel}
                 onClickInviteWorkspace={onClickInviteWorkspace}
               />
-              <h3>채널</h3>
-              {channels?.map((channel) => (
-                <div key={channel.id}>{channel.name}</div>
-              ))}
-              <h3>멤버</h3>
-              {members?.map((member) => (
-                <div key={member.id}>{member.email}</div>
-              ))}
+              <ChannelList workspace={workspaceUrl} />
+              <DMList workspace={workspaceUrl} />
             </MenuScroll>
           </Channels>
         )}

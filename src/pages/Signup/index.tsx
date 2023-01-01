@@ -4,7 +4,7 @@ import { Link, Navigate } from 'react-router-dom';
 import { AxiosError } from 'axios';
 import { Button, Error, Form, Header, Input, Label, LinkContainer, Success } from '@components/common/styles';
 import useUsers from '@hooks/dataFetch/useUsers';
-import { createUserAsync } from '@apis/users';
+import { createUserAsync, loginAsync } from '@apis/users';
 import useDefaultUrl from '@hooks/useDefaultUrl';
 
 const Signup = () => {
@@ -34,6 +34,7 @@ const Signup = () => {
 
       try {
         await createUserAsync(email, nickname, password);
+        await loginAsync(email, password);
         setSignUpSuccess(true);
         mutate();
       } catch (err) {
