@@ -3,6 +3,7 @@ import { MouseEvent, useCallback } from 'react';
 import gravatar from 'gravatar';
 import { LogOutButton, ProfileModal } from './styles';
 import useUsers from '@hooks/dataFetch/useUsers';
+import SkeletonizedImage from '@components/base/SkeletonizedImage';
 
 interface ProfileMenuProps {
   show?: boolean;
@@ -28,7 +29,12 @@ const ProfileMenu = ({ show, onCloseModal, onClickLogout }: ProfileMenuProps) =>
   return (
     <Menu style={{ right: 0, top: 38 }} show={show} onCloseModal={onCloseModalInner}>
       <ProfileModal>
-        <img src={gravatar.url(user.email, { s: '36px', d: 'retro' })} alt={user.nickname} />
+        <SkeletonizedImage
+          width={36}
+          height={36}
+          src={gravatar.url(user.email, { s: '36px', d: 'retro' })}
+          alt={user.nickname}
+        />
         <div>
           <span id="profile-name">{user.nickname}</span>
           <span id="profile-active">Active</span>

@@ -5,6 +5,7 @@ import { lazy, Suspense } from 'react';
 import { Routes, Route, Outlet } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 const Login = lazy(() => import('@pages/Login'));
 const Signup = lazy(() => import('@pages/Signup'));
