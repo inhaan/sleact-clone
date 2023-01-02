@@ -4,17 +4,20 @@ import { Container, Header } from './styles';
 import gravatar from 'gravatar';
 import ChatBox from '@components/workspace/ChatBox';
 import useInput from '@hooks/useInput';
-import { useCallback } from 'react';
+import ChatList from '@components/workspace/ChatList';
 
 const DirectMessage = () => {
   const { workspace, id } = useParams();
   const { user } = useWorkspaceUsers(workspace, id);
   const [chat, onChangeChat, setChat] = useInput('');
 
-  const onSubmitChat = useCallback(() => {
-    console.log(chat);
-    setChat('');
-  }, [chat]);
+  const onSubmitChat = async () => {
+    if (workspace && id && chat && chat.trim()) {
+      console.log(chat);
+      // await chatWorkspaceDmAsync(workspace, id, chat);
+      setChat('');
+    }
+  };
 
   if (!user) {
     return null;
@@ -25,7 +28,8 @@ const DirectMessage = () => {
         <img src={gravatar.url(user.email, { s: '36px', d: 'retro' })} alt={user.nickname} />
         <span>{user.nickname}</span>
       </Header>
-      <ChatBox chat={chat} onChangeChat={onChangeChat} onSubmitChat={onSubmitChat} />
+      <ChatList />
+      <ChatBox refresher={user.email} chat={chat} onChangeChat={onChangeChat} onSubmitChat={onSubmitChat} />
     </Container>
   );
 };

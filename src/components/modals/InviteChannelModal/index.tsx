@@ -1,20 +1,21 @@
-import { inviteWorkspaceMemberAsync as inviteWorkspaceAsync } from '@apis/workspaces';
+import { inviteChannelMemberAsync } from '@apis/workspaces';
 import Modal from '@components/base/Modal';
 import { Button, Input, Label } from '@components/common/styles';
-import useWorkspaceMembers from '@hooks/dataFetch/useWorkspaceMembers';
+import useWorkspaceChannelMembers from '@hooks/dataFetch/useWorkspaceChannelMembers';
 import useInput from '@hooks/useInput';
 import { notifyError, toastError } from '@utils/toast';
 import { FormEvent, MouseEvent, useCallback } from 'react';
 
-interface InviteWorkspaceModalProps {
+interface InviteChannelModalProps {
   show?: boolean;
   onCloseModal?(): void;
   workspace: string;
+  channel: string;
 }
 
-const InviteWorkspaceModal = ({ show, onCloseModal, workspace }: InviteWorkspaceModalProps) => {
+const InviteChannelModal = ({ show, onCloseModal, workspace, channel }: InviteChannelModalProps) => {
   const [email, onChangeEmail, setEmail] = useInput('');
-  const { mutate } = useWorkspaceMembers(workspace);
+  const { mutate } = useWorkspaceChannelMembers(workspace, channel);
 
   const onCloseModalInner = useCallback(
     (e: MouseEvent) => {
@@ -34,7 +35,7 @@ const InviteWorkspaceModal = ({ show, onCloseModal, workspace }: InviteWorkspace
         return;
       }
       try {
-        await inviteWorkspaceAsync(workspace, email);
+        await inviteChannelMemberAsync(workspace, channel, email);
         mutate();
         onCloseModal?.();
         setEmail('');
@@ -42,14 +43,14 @@ const InviteWorkspaceModal = ({ show, onCloseModal, workspace }: InviteWorkspace
         notifyError(err, '사용자를 초대하지 못했습니다');
       }
     },
-    [workspace, email, mutate, onCloseModal, setEmail],
+    [workspace, channel, email, mutate, onCloseModal, setEmail],
   );
 
   return (
     <Modal show={show} onCloseModal={onCloseModalInner}>
       <form onSubmit={onSubmit}>
         <Label>
-          <span>이메일</span>
+          <span>채널 멤버 초대</span>
           <Input type="email" value={email} onChange={onChangeEmail} />
         </Label>
         <Button type="submit">초대하기</Button>
@@ -58,4 +59,4 @@ const InviteWorkspaceModal = ({ show, onCloseModal, workspace }: InviteWorkspace
   );
 };
 
-export default InviteWorkspaceModal;
+export default InviteChannelModal;

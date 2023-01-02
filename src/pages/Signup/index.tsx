@@ -45,7 +45,7 @@ const Signup = () => {
         }
       }
     },
-    [isValid, email, nickname, password],
+    [isValid, email, nickname, password, mutate],
   );
 
   const onChangePassword = useCallback(

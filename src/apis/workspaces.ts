@@ -10,3 +10,18 @@ export const inviteWorkspaceMemberAsync = async (workspace: string, email: strin
   const { data } = await axios.post<'ok'>(`/api/workspaces/${workspace}/members`, { email });
   return data;
 };
+
+export const inviteChannelMemberAsync = async (workspace: string, channel: string, email: string) => {
+  const { data } = await axios.post<'ok'>(`/api/workspaces/${workspace}/channels/${channel}/members`, { email });
+  return data;
+};
+
+export const chatWorkspaceDmAsync = async (workspace: string, id: string, content: string) => {
+  const { data } = await axios.post<'ok'>(`/api/workspaces/${workspace}/dms/${id}/chats`, { content });
+  return data;
+};
+
+export const chatWorkspaceChannelAsync = async (workspace: string, channel: string, content: string) => {
+  const { data } = await axios.post<'ok'>(`/api/workspaces/${workspace}/channels/${channel}/chats`, { content });
+  return data;
+};

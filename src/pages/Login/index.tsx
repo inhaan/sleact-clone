@@ -25,7 +25,7 @@ const Login = () => {
         setLoginError(true);
       }
     },
-    [email, password],
+    [email, password, mutate],
   );
 
   if (user) {

@@ -21,10 +21,8 @@ import ProfileMenu from '@components/menus/ProfileMenu';
 import WorkspaceLink from '@components/workspace/WorkspaceLink';
 import WorkspaceMenu from '@components/menus/WorkspaceMenu';
 import CreateChannelModal from '@components/modals/CreateChannelModal';
-import useChannels from '@hooks/dataFetch/useChannels';
 import { saveLocation } from '@utils/localStorage';
 import InviteWorkspaceModal from '@components/modals/InviteWorksaceModal';
-import useWorkspaceMembers from '@hooks/dataFetch/useWorkspaceMembers';
 import ChannelList from '@components/workspace/ChannelList';
 import DMList from '@components/workspace/DMList';
 
@@ -32,8 +30,6 @@ const Workspace = () => {
   const { workspace: workspaceUrl, channel, id } = useParams();
   const { user, mutate, isLoading } = useUsers();
   const workspace = user ? user.Workspaces.find((x) => x.url === workspaceUrl) : null;
-  const { channels } = useChannels(workspaceUrl);
-  const { members } = useWorkspaceMembers(workspaceUrl);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] = useState(false);
   const [showWorkspaceMenu, setShowWorkspaceMenu] = useState(false);
@@ -62,7 +58,7 @@ const Workspace = () => {
     } catch (err) {
       notifyError(err, '채널을 생성하지 못했습니다');
     }
-  }, []);
+  }, [mutate]);
 
   const onCloseModal = useCallback(() => {
     setShowCreateWorkspaceModal(false);

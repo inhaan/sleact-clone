@@ -20,7 +20,7 @@ const CreateWorkspaceModal = ({ show, onCloseModal }: CreateWorkspaceModalProps)
     onCloseModal?.();
     setWorkspace('');
     setUrl('');
-  }, [onCloseModal]);
+  }, [onCloseModal, setUrl, setWorkspace]);
 
   const onCloseModalInner = useCallback(
     (e: MouseEvent) => {

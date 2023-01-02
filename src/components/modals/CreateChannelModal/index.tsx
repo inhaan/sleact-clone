@@ -23,7 +23,7 @@ const CreateChannelModal = ({ workspaceUrl, show, onCloseModal }: CreateChannelM
         setChannel('');
       }
     },
-    [onCloseModal],
+    [onCloseModal, setChannel],
   );
 
   const onSubmit = useCallback(
@@ -42,7 +42,7 @@ const CreateChannelModal = ({ workspaceUrl, show, onCloseModal }: CreateChannelM
         notifyError(err, '채널을 생성하지 못했습니다');
       }
     },
-    [workspaceUrl, channel, mutate, onCloseModal],
+    [workspaceUrl, channel, mutate, onCloseModal, setChannel],
   );
 
   return (

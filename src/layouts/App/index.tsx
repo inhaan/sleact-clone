@@ -2,7 +2,7 @@ import Workspace from '@layouts/Workspace';
 import EmptyChat from '@pages/EmptyChat';
 import EmptyWorkspace from '@pages/EmptyWorkspace';
 import { lazy, Suspense } from 'react';
-import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { Routes, Route, Outlet } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
