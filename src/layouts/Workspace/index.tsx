@@ -25,16 +25,20 @@ import { saveLocation } from '@utils/localStorage';
 import InviteWorkspaceModal from '@components/modals/InviteWorksaceModal';
 import ChannelList from '@components/workspace/ChannelList';
 import DMList from '@components/workspace/DMList';
+import useSocket from '@hooks/useSocket';
+import useChannels from '@hooks/dataFetch/useChannels';
 
 const Workspace = () => {
   const { workspace: workspaceUrl, channel, id } = useParams();
   const { user, mutate, isLoading } = useUsers();
+  const { channels } = useChannels(workspaceUrl);
   const workspace = user ? user.Workspaces.find((x) => x.url === workspaceUrl) : null;
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] = useState(false);
   const [showWorkspaceMenu, setShowWorkspaceMenu] = useState(false);
   const [showCreateChannelModal, setShowCreateChannelModal] = useState(false);
   const [showInviteWorkspaceModal, setShowInviteWorkspaceModal] = useState(false);
+  const [socket] = useSocket(workspaceUrl);
 
   useEffect(() => {
     // 현재 위치 저장
@@ -42,6 +46,12 @@ const Workspace = () => {
       saveLocation(user.email, { workspace: workspaceUrl, channel, id });
     }
   }, [user, workspaceUrl, channel, id]);
+
+  useEffect(() => {
+    if (user && channels) {
+      socket.emit('login', { id: user.id, channels });
+    }
+  }, [socket, user, channels]);
 
   const onToggleUserProfile = useCallback(() => {
     setShowUserMenu((prev) => !prev);

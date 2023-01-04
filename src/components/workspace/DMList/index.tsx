@@ -1,7 +1,8 @@
 import { CollapseButton } from '@components/common/styles';
 import useUsers from '@hooks/dataFetch/useUsers';
 import useWorkspaceMembers from '@hooks/dataFetch/useWorkspaceMembers';
-import { useCallback, useState } from 'react';
+import useSocket from '@hooks/useSocket';
+import { useCallback, useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
 interface DMListProps {
@@ -10,8 +11,21 @@ interface DMListProps {
 
 const DMList = ({ workspace }: DMListProps) => {
   const [dmCollapse, setDmCollapse] = useState(false);
+  const [onlineList, setOnlineList] = useState<number[]>([]);
   const { members } = useWorkspaceMembers(workspace);
   const { user } = useUsers();
+  const [socket] = useSocket(workspace);
+
+  useEffect(() => {
+    setOnlineList([]);
+  }, [workspace]);
+
+  useEffect(() => {
+    socket.on('onlineList', setOnlineList);
+    return () => {
+      socket.off('onlineList');
+    };
+  }, [socket]);
 
   const toggleDmCollapse = useCallback(() => {
     setDmCollapse((prev) => !prev);
@@ -28,7 +42,7 @@ const DMList = ({ workspace }: DMListProps) => {
       <div>
         {!dmCollapse &&
           members?.map((member) => {
-            const isOnline = true;
+            const isOnline = onlineList.some((id) => id === member.id);
             return (
               <NavLink
                 key={member.id}
