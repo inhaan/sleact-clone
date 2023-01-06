@@ -3,3 +3,8 @@ export interface AppLocation {
   channel?: string;
   id?: string;
 }
+
+export interface EmojiData {
+  emoji: string;
+  name: string;
+}

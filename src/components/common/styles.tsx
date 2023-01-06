@@ -135,3 +135,22 @@ export const CollapseButton = styled.button<{ collapse: boolean }>`
     }
   `};
 `;
+
+export const EachMention = styled.button<{ focus: boolean }>`
+  padding: 4px 20px;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  color: rgb(28, 29, 28);
+  width: 100%;
+  & img {
+    margin-right: 5px;
+  }
+  ${({ focus }) =>
+    focus &&
+    `
+    background: #1264a3;
+    color: white;
+  `};
+`;

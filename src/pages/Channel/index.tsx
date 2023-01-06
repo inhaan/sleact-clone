@@ -43,7 +43,7 @@ const Channel = () => {
       {members?.map((member) => (
         <div key={member.id}>{member.nickname}</div>
       ))}
-      <ChatList />
+      {/* <ChatList /> */}
       <ChatBox refresher={channel} chat={chat} onChangeChat={onChangeChat} onSubmitChat={onSubmitChat} />
       {workspace && channel && (
         <InviteChannelModal

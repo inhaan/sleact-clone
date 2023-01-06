@@ -6,17 +6,20 @@ import ChatBox from '@components/workspace/ChatBox';
 import useInput from '@hooks/useInput';
 import ChatList from '@components/workspace/ChatList';
 import SkeletonizedImage from '@components/base/SkeletonizedImage';
+import useDMChats from '@hooks/dataFetch/useDMChats';
+import { chatWorkspaceDmAsync } from '@apis/workspaces';
 
 const DirectMessage = () => {
   const { workspace, id } = useParams();
   const { user } = useWorkspaceUsers(workspace, id);
+  const { mutate } = useDMChats(workspace, id);
   const [chat, onChangeChat, setChat] = useInput('');
 
   const onSubmitChat = async () => {
     if (workspace && id && chat && chat.trim()) {
-      console.log(chat);
-      // await chatWorkspaceDmAsync(workspace, id, chat);
+      await chatWorkspaceDmAsync(workspace, id, chat);
       setChat('');
+      mutate();
     }
   };
 
@@ -34,8 +37,14 @@ const DirectMessage = () => {
         />
         <span>{user.nickname}</span>
       </Header>
-      <ChatList />
-      <ChatBox refresher={user.email} chat={chat} onChangeChat={onChangeChat} onSubmitChat={onSubmitChat} />
+      {workspace && id && <ChatList workspace={workspace} id={id} />}
+      <ChatBox
+        workspace={workspace}
+        refresher={user.email}
+        chat={chat}
+        onChangeChat={onChangeChat}
+        onSubmitChat={onSubmitChat}
+      />
     </Container>
   );
 };

@@ -5,7 +5,7 @@ import useSWR from 'swr';
 
 const useWorkspaceUsers = (workspace?: string, id?: string) => {
   const { data, error, isLoading, isValidating, mutate } = useSWR<IUser, AxiosError>(
-    workspace && `/api/workspaces/${workspace}/users/${id}`,
+    workspace && id && `/api/workspaces/${workspace}/users/${id}`,
     axiosFetcher,
   );
   return {
