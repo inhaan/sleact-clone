@@ -5,6 +5,7 @@ import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-serv
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import CopyPlugin from 'copy-webpack-plugin';
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
 interface Configuration extends WebpackConfiguration {
   devServer?: WebpackDevServerConfiguration;
@@ -106,6 +107,9 @@ const config: Configuration = {
 
 if (config.mode == 'development') {
   config.plugins?.push(new ReactRefreshWebpackPlugin());
+  config.plugins?.push(new BundleAnalyzerPlugin());
+} else if (config.mode == 'production') {
+  config.plugins?.push(new BundleAnalyzerPlugin({ analyzerMode: 'static' }));
 }
 
 export default config;
