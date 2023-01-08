@@ -23,7 +23,7 @@ const DMList = ({ workspace }: DMListProps) => {
   useEffect(() => {
     socket.on('onlineList', setOnlineList);
     return () => {
-      socket.off('onlineList');
+      socket.off('onlineList', setOnlineList);
     };
   }, [socket]);
 

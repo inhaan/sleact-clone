@@ -1,25 +1,26 @@
-import useDMChats from '@hooks/dataFetch/useDMChats';
 import Chat from '@components/workspace/Chat';
 import { positionValues, Scrollbars } from 'react-custom-scrollbars-2';
 import { ChatZone, Section, StickyHeader } from './styles';
 import { useMemo, useRef, useEffect } from 'react';
 import { makeSection } from '@utils/chat';
 import { ScrollToBottomEmitOption } from '@typings/app';
+import { IChat, IDM } from '@typings/db';
 
 interface ChatListProps {
   workspace: string;
-  id: string;
+  chats?: IDM[] | IChat[];
+  setSize: (size: number | ((_size: number) => number)) => Promise<(IDM | IChat)[][] | undefined>;
+  isReachEnd: boolean;
   scrollToBottomEmitter?: ScrollToBottomEmitOption;
+  refresher?: any;
 }
 
-const ChatList = ({ workspace, id, scrollToBottomEmitter }: ChatListProps) => {
-  const { chats, setSize, isReachEnd } = useDMChats(workspace, id);
+const ChatList = ({ workspace, chats, setSize, scrollToBottomEmitter, isReachEnd, refresher }: ChatListProps) => {
   const scrollRef = useRef<Scrollbars>(null);
-  const isFirstLoad = useRef<boolean>(false);
   const isPrevLoading = useRef<boolean>(false);
 
   const sections = useMemo(() => {
-    return makeSection(chats?.reverse() ?? []);
+    return makeSection([...(chats ?? [])].reverse());
   }, [chats]);
 
   const onScroll = async ({ scrollTop, scrollHeight }: positionValues) => {
@@ -30,18 +31,10 @@ const ChatList = ({ workspace, id, scrollToBottomEmitter }: ChatListProps) => {
     }
   };
 
-  // 최초 로딩 여부
-  useEffect(() => {
-    isFirstLoad.current = true;
-  }, [workspace, id]);
-
   // 최초 로딩시 스크롤 제일 아래로 내림
   useEffect(() => {
-    if (isFirstLoad.current && chats && scrollRef.current) {
-      scrollRef.current.scrollToBottom();
-      isFirstLoad.current = false;
-    }
-  }, [chats]);
+    scrollRef.current?.scrollToBottom();
+  }, [refresher]);
 
   // 부모에서 스크롤 내리기 요청
   useEffect(() => {

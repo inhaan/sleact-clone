@@ -8,7 +8,7 @@ import ChatList from '@components/workspace/ChatList';
 import SkeletonizedImage from '@components/base/SkeletonizedImage';
 import useDMChats from '@hooks/dataFetch/useDMChats';
 import { chatWorkspaceDmAsync } from '@apis/workspaces';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import useUsers from '@hooks/dataFetch/useUsers';
 import useSocket from '@hooks/useSocket';
 import { IDM } from '@typings/db';
@@ -17,7 +17,7 @@ import { ScrollToBottomEmitOption } from '@typings/app';
 const DirectMessage = () => {
   const { workspace, id } = useParams();
   const { user } = useWorkspaceUsers(workspace, id);
-  const { chats, mutate } = useDMChats(workspace, id);
+  const { chats, mutate, setSize, isReachEnd } = useDMChats(workspace, id);
   const [chat, onChangeChat, setChat] = useInput('');
   const [scrollToBottomEmitter, setScrollToBottomEmitter] = useState<ScrollToBottomEmitOption>({});
   const { user: meUser } = useUsers();
@@ -51,8 +51,8 @@ const DirectMessage = () => {
     }
   };
 
-  useEffect(() => {
-    socket.on('dm', async (data: IDM) => {
+  const onMessage = useCallback(
+    async (data: IDM) => {
       if (!user || !meUser || data.SenderId !== user.id || meUser.id === user.id) {
         return;
       }
@@ -61,11 +61,16 @@ const DirectMessage = () => {
         return prev;
       });
       setScrollToBottomEmitter({ height: 200 });
-    });
+    },
+    [user, meUser, mutate],
+  );
+
+  useEffect(() => {
+    socket.on('dm', onMessage);
     return () => {
-      socket.off('dm');
+      socket.off('dm', onMessage);
     };
-  }, [socket, user, meUser, mutate]);
+  }, [socket, onMessage]);
 
   if (!user) {
     return null;
@@ -81,7 +86,16 @@ const DirectMessage = () => {
         />
         <span>{user.nickname}</span>
       </Header>
-      {workspace && id && <ChatList workspace={workspace} id={id} scrollToBottomEmitter={scrollToBottomEmitter} />}
+      {workspace && id && (
+        <ChatList
+          workspace={workspace}
+          chats={chats}
+          setSize={setSize}
+          isReachEnd={isReachEnd}
+          scrollToBottomEmitter={scrollToBottomEmitter}
+          refresher={`${workspace}/${id}`}
+        />
+      )}
       <ChatBox
         workspace={workspace}
         refresher={user.email}

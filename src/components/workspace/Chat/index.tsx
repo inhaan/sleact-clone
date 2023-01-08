@@ -1,4 +1,4 @@
-import { IDM } from '@typings/db';
+import { IChat, IDM } from '@typings/db';
 import gravatar from 'gravatar';
 import { memo, useCallback, useMemo } from 'react';
 import dayjs from 'dayjs';
@@ -7,12 +7,16 @@ import { ChatWrapper } from './styles';
 import { Link } from 'react-router-dom';
 
 interface ChatProps {
-  chat: IDM;
+  chat: IDM | IChat;
   workspace: string;
 }
 
+const isDM = (chat: IDM | IChat): chat is IDM => {
+  return 'Sender' in chat;
+};
+
 const Chat = ({ chat, workspace }: ChatProps) => {
-  const user = chat.Sender;
+  const user = isDM(chat) ? chat.Sender : chat.User;
 
   const getLineElement = useCallback(
     (line: string) => {
