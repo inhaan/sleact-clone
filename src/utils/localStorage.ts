@@ -1,17 +1,19 @@
-import { AppLocation } from '@typings/app';
+import { AppLocation, EmojiData } from '@typings/app';
 
-const APP_LOCATION_STORAGE_KEY = 'location';
+const APP_STORAGE_KEY = 'sleact-clone';
 
-export const getLocationStorageKey = (email: string) => `${APP_LOCATION_STORAGE_KEY}/${email}`;
+export const getStorageKey = (email: string) => `${APP_STORAGE_KEY}/${email}`;
 
 export const saveLocation = (email: string, location: AppLocation) => {
-  localStorage.setItem(getLocationStorageKey(email), JSON.stringify(location));
+  const storageKey = getStorageKey(email);
+  const prevStrData = localStorage.getItem(storageKey);
+  const prevData = prevStrData ? JSON.parse(prevStrData) : {};
+  localStorage.setItem(getStorageKey(email), JSON.stringify({ ...prevData, location }));
 };
 
-export const getLocation = (email: string): AppLocation => {
-  const data = localStorage.getItem(getLocationStorageKey(email));
-  if (!data) {
-    return {};
-  }
-  return JSON.parse(data);
+export const saveEmojis = (email: string, emojis: EmojiData[]) => {
+  const storageKey = getStorageKey(email);
+  const prevStrData = localStorage.getItem(storageKey);
+  const prevData = prevStrData ? JSON.parse(prevStrData) : {};
+  localStorage.setItem(getStorageKey(email), JSON.stringify({ ...prevData, emojis }));
 };

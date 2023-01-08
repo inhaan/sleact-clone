@@ -55,7 +55,7 @@ const useSocket = (workspace?: string) => {
   if (!workspace) {
     return [];
   }
-  return [sm.getSocket(workspace).socket];
+  return [sm.getSocket(workspace).socket] as const;
 };
 
 export default useSocket;

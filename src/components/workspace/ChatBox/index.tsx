@@ -1,7 +1,7 @@
-import { ChangeEvent, Component, FormEvent, KeyboardEvent, Ref, useCallback, useEffect, useRef } from 'react';
+import { FormEvent, KeyboardEvent, useCallback, useEffect, useRef } from 'react';
 import { ChatArea, Form, MentionsTextarea, SendButton, Toolbox } from './styles';
 import autosize from 'autosize';
-import { MentionsInput, Mention, SuggestionDataItem, MentionsInputProps, DataFunc } from 'react-mentions';
+import { Mention, SuggestionDataItem, DataFunc } from 'react-mentions';
 import useEmoji from '@hooks/useEmoji';
 import { EmojiData } from '@typings/app';
 import useWorkspaceMembers from '@hooks/dataFetch/useWorkspaceMembers';

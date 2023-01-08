@@ -8,3 +8,7 @@ export interface EmojiData {
   emoji: string;
   name: string;
 }
+
+export interface ScrollToBottomEmitOption {
+  height?: number;
+}
