@@ -97,6 +97,10 @@ const config: Configuration = {
         target: 'http://localhost:3095',
         changeOrigin: true,
       },
+      '/uploads/': {
+        target: 'http://localhost:3095',
+        changeOrigin: true,
+      },
       '/socket.io/': {
         target: 'ws://localhost:3095',
         ws: true,

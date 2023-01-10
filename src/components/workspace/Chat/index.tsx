@@ -20,6 +20,9 @@ const Chat = ({ chat, workspace }: ChatProps) => {
 
   const getLineElement = useCallback(
     (line: string) => {
+      if (line.startsWith('uploads\\')) {
+        return [<img key={line} src={`/${line}`} style={{ maxHeight: 200 }} />];
+      }
       return regexifyString({
         input: line,
         pattern: /@\[(.+?)\]\((\d+?)\)/g,

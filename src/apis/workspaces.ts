@@ -25,3 +25,8 @@ export const chatWorkspaceChannelAsync = async (workspace: string, channel: stri
   const { data } = await axios.post<'ok'>(`/api/workspaces/${workspace}/channels/${channel}/chats`, { content });
   return data;
 };
+
+export const uploadDMImageAsync = async (workspace: string, id: string, formData: FormData) => {
+  const { data } = await axios.post(`/api/workspaces/${workspace}/dms/${id}/images`, formData);
+  return data;
+};
