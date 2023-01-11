@@ -1,4 +1,5 @@
-import { chatWorkspaceChannelAsync } from '@apis/workspaces';
+import { chatWorkspaceChannelAsync, uploadChannelImageAsync } from '@apis/workspaces';
+import { DragOver } from '@components/common/styles';
 import InviteChannelModal from '@components/modals/InviteChannelModal';
 import ChatBox from '@components/workspace/ChatBox';
 import ChatList from '@components/workspace/ChatList';
@@ -6,11 +7,13 @@ import useChannel from '@hooks/dataFetch/useChannel';
 import useChannelChat from '@hooks/dataFetch/useChannelChats';
 import useUsers from '@hooks/dataFetch/useUsers';
 import useWorkspaceChannelMembers from '@hooks/dataFetch/useWorkspaceChannelMembers';
+import useDragOver from '@hooks/useImageUpload';
 import useInput from '@hooks/useInput';
 import useSocket from '@hooks/useSocket';
 import { ScrollToBottomEmitOption } from '@typings/app';
 import { IChat } from '@typings/db';
-import { useCallback, useEffect, useState } from 'react';
+import { getImageFormData } from '@utils/file';
+import { DragEvent, useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Container, Header } from './styles';
 
@@ -24,6 +27,7 @@ const Channel = () => {
   const [socket] = useSocket(workspace);
   const { channel: channelData } = useChannel(workspace, channel);
   const { user } = useUsers();
+  const [isDragOver, setIsDragOver, onDragOver] = useDragOver();
 
   const optimisticlyAddChat = async () => {
     if (channelData && user) {
@@ -82,11 +86,27 @@ const Channel = () => {
     };
   }, [socket, onMessage]);
 
+  const onDrop = async (e: DragEvent) => {
+    e.preventDefault();
+    if (!workspace || !channel) {
+      return;
+    }
+    const formData = getImageFormData(e.dataTransfer);
+    if (!formData) {
+      return;
+    }
+
+    await uploadChannelImageAsync(workspace, channel, formData);
+    setIsDragOver(false);
+    await mutateChat();
+    setScrollToBottomEmitter({});
+  };
+
   if (!members || !workspace || !channel) {
     return null;
   }
   return (
-    <Container>
+    <Container onDragOver={onDragOver} onDrop={onDrop}>
       <Header>
         <span>#{channel}</span>
         <div className="header-right">
@@ -117,6 +137,7 @@ const Channel = () => {
         show={showInviteChannelModal}
         onCloseModal={onCloseModal}
       />
+      {isDragOver && <DragOver>업로드</DragOver>}
     </Container>
   );
 };

@@ -1,6 +1,6 @@
 import useWorkspaceUsers from '@hooks/dataFetch/useWorkspaceUsers';
 import { useParams } from 'react-router-dom';
-import { Container, DragOver, Header } from './styles';
+import { Container, Header } from './styles';
 import gravatar from 'gravatar';
 import ChatBox from '@components/workspace/ChatBox';
 import useInput from '@hooks/useInput';
@@ -13,10 +13,11 @@ import useUsers from '@hooks/dataFetch/useUsers';
 import useSocket from '@hooks/useSocket';
 import { IDM } from '@typings/db';
 import { ScrollToBottomEmitOption } from '@typings/app';
-import UploadCover from './UploadCover';
 import _ from 'lodash';
-import axios from 'axios';
 import { toastError } from '@utils/toast';
+import { DragOver } from '@components/common/styles';
+import useDragOver from '@hooks/useImageUpload';
+import { getImageFormData } from '@utils/file';
 
 const DirectMessage = () => {
   const { workspace, id } = useParams();
@@ -26,7 +27,7 @@ const DirectMessage = () => {
   const [scrollToBottomEmitter, setScrollToBottomEmitter] = useState<ScrollToBottomEmitOption>({});
   const { user: meUser } = useUsers();
   const [socket] = useSocket(workspace);
-  const [isDragOver, setIsDragOver] = useState(false);
+  const [isDragOver, setIsDragOver, onDragOver] = useDragOver();
 
   const optimisticlyAddChat = async () => {
     if (user && meUser) {
@@ -77,63 +78,20 @@ const DirectMessage = () => {
     };
   }, [socket, onMessage]);
 
-  const releaseDragOver = useCallback(
-    _.debounce(() => {
-      setIsDragOver(false);
-    }, 100),
-    [],
-  );
-
-  const onDragOver = useCallback(
-    (e: DragEvent) => {
-      e.preventDefault();
-      setIsDragOver(true);
-      releaseDragOver();
-    },
-    [releaseDragOver],
-  );
-
-  const getFormData = (dataTransfer: DataTransfer) => {
-    const formData = new FormData();
-    if (dataTransfer.items) {
-      for (let i = 0; i < dataTransfer.items.length; i++) {
-        if (dataTransfer.items[i].kind === 'file') {
-          const file = dataTransfer.items[i].getAsFile();
-          if (file) {
-            if (!file.type.startsWith('image/')) {
-              toastError('이미지 파일을 업로드해 주세요');
-              return null;
-            }
-            formData.append('image', file);
-          }
-        }
-      }
-    } else {
-      for (let i = 0; i < dataTransfer.files.length; i++) {
-        const file = dataTransfer.files[i];
-        if (!file.type.startsWith('image/')) {
-          toastError('이미지 파일을 업로드해 주세요');
-          return null;
-        }
-        formData.append('image', file);
-      }
-    }
-    return formData;
-  };
-
   const onDrop = async (e: DragEvent) => {
     e.preventDefault();
     if (!workspace || !id) {
       return;
     }
-    const formData = getFormData(e.dataTransfer);
+    const formData = getImageFormData(e.dataTransfer);
     if (!formData) {
       return;
     }
 
     await uploadDMImageAsync(workspace, id, formData);
     setIsDragOver(false);
-    mutate();
+    await mutate();
+    setScrollToBottomEmitter({});
   };
 
   if (!user || !workspace || !id) {

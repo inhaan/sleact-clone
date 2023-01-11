@@ -143,9 +143,10 @@ const ChatBox = ({ workspace, refresher, chat, onChangeChat, onSubmitChat }: Cha
         <Toolbox>
           <SendButton
             type="submit"
-            className={`c-button-unstyled c-icon_button c-icon_button--light c-icon_button--size_medium c-texty_input__button c-texty_input__button--send'${
-              chat?.trim() ? '' : ' c-texty_input__button--disabled'
-            }`}
+            className={
+              'c-button-unstyled c-icon_button c-icon_button--light c-icon_button--size_medium c-texty_input__button c-texty_input__button--send' +
+              (chat?.trim() ? '' : ' c-texty_input__button--disabled')
+            }
             disabled={!chat?.trim()}
           >
             <i className="c-icon c-icon--paperplane-filled" />
